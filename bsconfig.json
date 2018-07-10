@@ -1,5 +1,5 @@
 {
-	"name": "bs-eos",
+	"name": "@sagan-software/bs-eos",
 	"version": "0.1.0",
 	"sources": {
 		"dir": "src",
