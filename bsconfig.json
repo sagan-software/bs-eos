@@ -1,16 +1,22 @@
 {
 	"name": "@sagan-software/bs-eos",
 	"version": "0.1.0",
-	"sources": {
-		"dir": "src",
-		"subdirs": true
-	},
+	"sources": [
+		{
+			"dir": "src"
+		},
+		{
+			"dir": "__tests__",
+			"type": "dev"
+		}
+	],
 	"package-specs": {
 		"module": "commonjs",
 		"in-source": true
 	},
 	"suffix": ".js",
-	"bs-dependencies": [],
+	"bs-dev-dependencies": ["@glennsl/bs-jest"],
+	"bs-dependencies": ["@glennsl/bs-json", "@sagan-software/bs-bignumber"],
 	"warnings": {
 		"error": "+101"
 	},

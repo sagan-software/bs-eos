@@ -1,89 +1,70 @@
-type t;
+include Eos_Types;
+module Api = Eos_Api;
 
-module Name = {
-  type t = string;
-  let possibleChars = "12345abcdefghijklmnopqrstuvwxyz";
-  let possibleCharsLength = possibleChars |> Js.String.length;
-  let random = () => {
-    let chosenChars = [||];
-    for (_i in 1 to 12) {
-      let chosenIndex = Random.int(possibleCharsLength);
-      let chosenChar = possibleChars |> Js.String.charAt(chosenIndex);
-      chosenChars |> Js.Array.push(chosenChar) |> ignore;
-    };
-    chosenChars |> Js.Array.joinWith("");
-  };
+type t = {
+  config: Eos_Js.config,
+  eosjs: Eos_Js.t,
 };
 
-type accountName = Name.t;
-
-module Asset = {
-  type t = string;
+let make =
+    (
+      ~httpEndpoint,
+      ~verbose=?,
+      ~keyProvider=?,
+      ~chainId=?,
+      ~expireInSeconds=?,
+      ~sign=?,
+      ~broadcast=?,
+      (),
+    )
+    : t => {
+  let config =
+    Eos_Js.config(
+      ~httpEndpoint,
+      ~verbose?,
+      ~keyProvider?,
+      ~chainId?,
+      ~expireInSeconds?,
+      ~sign?,
+      ~broadcast?,
+      (),
+    );
+  let eosjs = Eos_Js.make(config);
+  {config, eosjs};
 };
 
-type asset = Asset.t;
+let getInfo = t => t.eosjs |> Eos_Js.getInfo;
 
-module TrxId = {
-  type t = string;
-};
+let getTableRows =
+    (
+      t,
+      ~rowDecoder,
+      ~code,
+      ~scope,
+      ~table,
+      ~json=true,
+      ~tableKey=?,
+      ~lowerBound=?,
+      ~upperBound=?,
+      ~limit=?,
+      (),
+    )
+    : Js.Promise.t(Api.TableRows.t('row)) =>
+  Eos_Js.tableRowsArgs(
+    ~code=code |> AccountName.toString,
+    ~scope=scope |> AccountName.toString,
+    ~table=table |> TableName.toString,
+    ~json,
+    ~tableKey=?tableKey |. Belt.Option.map(TableName.toString),
+    ~lowerBound=?lowerBound |. Belt.Option.map(BigNumber.toString),
+    ~upperBound=?upperBound |. Belt.Option.map(BigNumber.toString),
+    ~limit?,
+    (),
+  )
+  |> Eos_Js.getTableRowsRaw(t.eosjs)
+  |> Api.thenDecode(Api.TableRows.decode(rowDecoder));
 
-type trxId = TrxId.t;
-
-module Config = {
-  [@bs.deriving abstract]
-  type t = {
-    httpEndpoint: string,
-    [@bs.optional]
-    verbose: bool,
-    [@bs.optional]
-    keyProvider: array(string),
-    [@bs.optional]
-    chainId: string,
-    [@bs.optional]
-    expireInSeconds: int,
-    [@bs.optional]
-    sign: bool,
-  };
-};
-
-[@bs.module] external make : Config.t => t = "eosjs";
-
-[@bs.module "eosjs"] external localnet : Config.t => t = "Localnet";
-
-[@bs.send]
-external getTableRows :
-  (
-    t,
-    ~json: bool,
-    ~code: string,
-    ~scope: string,
-    ~table: string,
-    ~tableKey: string,
-    ~lowerBound: string,
-    ~upperBound: string,
-    ~limit: int
-  ) =>
-  Js.Promise.t(
-    {
-      .
-      "more": bool,
-      "rows": array('row),
-    },
-  ) =
-  "getTableRows";
-
-module Account = {
-  [@bs.deriving abstract]
-  type t = {
-    [@bs.as "account_name"]
-    accountName: string,
-  };
-};
-
-[@bs.send] external getAccount : (t, string) => Js.Promise.t(Account.t) = "";
-
-[@bs.send] external contract : (t, string) => Js.Promise.t('contract) = "";
-
-module Action = {
-  type options = {. "authorization": array(string)};
-};
+let getCode = (t, ~accountName) =>
+  t.eosjs
+  |. Eos_Js.getCodeRaw(accountName |. AccountName.toString)
+  |> Api.thenDecode(Api.Code.decode);

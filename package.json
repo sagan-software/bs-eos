@@ -3,8 +3,10 @@
 	"version": "0.1.0",
 	"scripts": {
 		"clean": "bsb -clean-world",
-		"build": "bsb -make-world",
-		"start": "bsb -make-world -w"
+		"build": "yarn clean && bsb -make-world",
+		"start-bsb": "bsb -make-world -w",
+		"start-test": "jest --watchAll",
+		"test": "yarn build && jest"
 	},
 	"keywords": [
 		"BuckleScript"
@@ -12,9 +14,17 @@
 	"author": "",
 	"license": "MIT",
 	"devDependencies": {
-		"bs-platform": "^3.1.4"
+		"@glennsl/bs-json": "^2.0.0",
+		"bs-platform": "^4.0.0",
+		"concurrently": "^3.6.0"
 	},
 	"peerDependencies": {
+		"@glennsl/bs-json": "^2.0.0",
+		"bs-platform": "^4.0.0"
+	},
+	"dependencies": {
+		"@glennsl/bs-jest": "^0.4.2",
+		"@sagan-software/bs-bignumber": "sagan-software/bs-bignumber",
 		"eosjs": "^15.0.3"
 	}
 }
