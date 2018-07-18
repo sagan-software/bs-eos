@@ -57,17 +57,11 @@ function getTableRows(t, rowDecoder, code, scope, table, $staropt$star, tableKey
   if (tmp$1) {
     tmp.table_key = Js_primitive.valFromOption(tmp$1);
   }
-  var tmp$2 = Belt_Option.map(lowerBound, (function (prim) {
-          return prim.toString();
-        }));
-  if (tmp$2) {
-    tmp.lower_bound = Js_primitive.valFromOption(tmp$2);
+  if (lowerBound) {
+    tmp.lower_bound = Js_primitive.valFromOption(lowerBound);
   }
-  var tmp$3 = Belt_Option.map(upperBound, (function (prim) {
-          return prim.toString();
-        }));
-  if (tmp$3) {
-    tmp.upper_bound = Js_primitive.valFromOption(tmp$3);
+  if (upperBound) {
+    tmp.upper_bound = Js_primitive.valFromOption(upperBound);
   }
   if (limit) {
     tmp.limit = Js_primitive.valFromOption(limit);

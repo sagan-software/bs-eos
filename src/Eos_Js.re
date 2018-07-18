@@ -98,8 +98,8 @@ let getTableRows =
     ~table=table |> TableName.toString,
     ~json,
     ~tableKey=?tableKey |. Belt.Option.map(TableName.toString),
-    ~lowerBound=?lowerBound |. Belt.Option.map(BigNumber.toString),
-    ~upperBound=?upperBound |. Belt.Option.map(BigNumber.toString),
+    ~lowerBound?,
+    ~upperBound?,
     ~limit?,
     (),
   )
