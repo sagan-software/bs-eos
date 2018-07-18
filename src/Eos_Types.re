@@ -64,51 +64,75 @@ module MakeChecksum512 = (Opaque: OpaqueStringTypeArgs) => {
 
 module MakeNameType = (Opaque: OpaqueStringTypeArgs) => {
   include MakeOpaqueStringType(Opaque);
-  [@bs.module "eosjs"] [@bs.scope ("modules", "ecc")]
-  external isValid : t => bool = "isName";
+  [@bs.module "eosjs"] [@bs.scope ("modules", "format")]
+  external isValid_ : string => bool = "isName";
+
+  [@bs.module "eosjs"] [@bs.scope ("modules", "format")]
+  external encode_ : string => string = "encodeName";
+
+  let resultFromString = str =>
+    if (str |. Js.String.trim |. Js.String.length === 0) {
+      "Empty string is not a name" |. Belt.Result.Error;
+    } else if (str
+               |> Js.String.replaceByRe([%bs.re "/\\./g"], "")
+               |. Js.String.trim
+               |. Js.String.length === 0) {
+      "Names must include characters other than dots" |. Belt.Result.Error;
+    } else {
+      switch (encode_(str)) {
+      | _encoded => str |. fromString |. Belt.Result.Ok
+      | exception (Js.Exn.Error(e)) =>
+        (
+          switch (Js.Exn.message(e)) {
+          | Some(message) => message
+          | None => {j|Could not convert "$str" to a name type|j}
+          }
+        )
+        |. Belt.Result.Error
+      };
+    };
+
+  let optionFromString = str =>
+    switch (str |. resultFromString) {
+    | Ok(t) => Some(t)
+    | Error(_) => None
+    };
 };
 
 module AccountName =
   MakeNameType({
     type t = string;
   });
-let accountName = AccountName.fromString;
 
 module PermissionName =
   MakeNameType({
     type t = string;
   });
-let permissionName = PermissionName.fromString;
 
 module TokenName =
   MakeNameType({
     type t = string;
   });
-let tokenName = TokenName.fromString;
 
 module TableName =
   MakeNameType({
     type t = string;
   });
-let tableName = TableName.fromString;
 
 module ScopeName =
   MakeNameType({
     type t = string;
   });
-let scopeName = ScopeName.fromString;
 
 module ActionName =
   MakeNameType({
     type t = string;
   });
-let actionName = ActionName.fromString;
 
 module TypeName =
   MakeNameType({
     type t = string;
   });
-let typeName = TypeName.fromString;
 
 module type OpaqueDateType = {
   include OpaqueType;
@@ -150,6 +174,16 @@ module BlockTimestamp =
       t |. Js.Date.toISOString |> Js.String.slice(~from=0, ~to_=-1);
     let decode = Json.Decode.string;
     let encode = Json.Encode.string;
+  });
+
+module TimePoint =
+  MakeOpaqueDateType({
+    type t = BigNumber.t;
+    let toDate = t =>
+      t |. BigNumber.divInt(1000) |. BigNumber.toFloat |. Js.Date.fromFloat;
+    let fromDate = t => t |. Js.Date.getTime |. BigNumber.fromFloat;
+    let decode = BigNumber.decode;
+    let encode = BigNumber.encode;
   });
 
 module PublicKey = {

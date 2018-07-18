@@ -3,6 +3,7 @@
 
 var Eos = require("../src/Eos.js");
 var Jest = require("@glennsl/bs-jest/src/jest.js");
+var Block = require("bs-platform/lib/js/block.js");
 var Eosjs = require("eosjs");
 var Eos_Types = require("../src/Eos_Types.js");
 var Belt_Option = require("bs-platform/lib/js/belt_Option.js");
@@ -58,6 +59,30 @@ describe("PrivateKey", (function () {
                     }));
       }));
 
+describe("AccountName", (function () {
+        describe("resultFromString", (function () {
+                Jest.test("empty names", (function () {
+                        return Jest.Expect[/* toEqual */12](/* Error */Block.__(1, ["Empty string is not a name"]), Jest.Expect[/* expect */0](Eos_Types.AccountName[/* resultFromString */6]("")));
+                      }));
+                Jest.test("all dots", (function () {
+                        return Jest.Expect[/* toEqual */12](/* Error */Block.__(1, ["Names must include characters other than dots"]), Jest.Expect[/* expect */0](Eos_Types.AccountName[/* resultFromString */6]("..")));
+                      }));
+                Jest.test("capital letters", (function () {
+                        return Jest.Expect[/* toEqual */12](/* Error */Block.__(1, ["Invalid character: 'W'"]), Jest.Expect[/* expect */0](Eos_Types.AccountName[/* resultFromString */6]("helloWORLD")));
+                      }));
+                Jest.test("more than 12 characters", (function () {
+                        return Jest.Expect[/* toEqual */12](/* Error */Block.__(1, ["A name can be up to 12 characters long"]), Jest.Expect[/* expect */0](Eos_Types.AccountName[/* resultFromString */6]("1234512345123")));
+                      }));
+                Jest.test("numbers greater than 5", (function () {
+                        return Jest.Expect[/* toEqual */12](/* Error */Block.__(1, ["Invalid character: '6'"]), Jest.Expect[/* expect */0](Eos_Types.AccountName[/* resultFromString */6]("qwerty6")));
+                      }));
+                return Jest.test("valid name", (function () {
+                              return Jest.Expect[/* toEqual */12](/* Ok */Block.__(0, [Eos_Types.AccountName[/* fromString */3]("hello")]), Jest.Expect[/* expect */0](Eos_Types.AccountName[/* resultFromString */6]("hello")));
+                            }));
+              }));
+        return /* () */0;
+      }));
+
 var httpEndpoint = "http://api.eosnewyork.io";
 
 var chainId = "aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906";
@@ -105,6 +130,16 @@ describe("BlockTimestamp", (function () {
               }));
         return Jest.test("encode", (function () {
                       return Jest.Expect[/* toEqual */12](json, Jest.Expect[/* expect */0](Eos_Types.BlockTimestamp[/* encode */1](Eos_Types.BlockTimestamp[/* decode */0](json))));
+                    }));
+      }));
+
+describe("TimePoint", (function () {
+        var json = "1529459862123456";
+        Jest.test("decode", (function () {
+                return Jest.Expect[/* toEqual */12]("2018-06-20T01:57:42.123Z", Jest.Expect[/* expect */0](Eos_Types.TimePoint[/* toDate */4](Eos_Types.TimePoint[/* decode */0](json)).toISOString()));
+              }));
+        return Jest.test("encode", (function () {
+                      return Jest.Expect[/* toEqual */12](json, Jest.Expect[/* expect */0](Eos_Types.TimePoint[/* encode */1](Eos_Types.TimePoint[/* decode */0](json))));
                     }));
       }));
 

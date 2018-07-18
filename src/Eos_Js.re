@@ -1,3 +1,6 @@
+open Eos_Types;
+open Eos_Chain;
+
 type t;
 
 [@bs.deriving abstract]
@@ -17,15 +20,41 @@ type config = {
   broadcast: bool,
 };
 
-[@bs.module] external make : config => t = "eosjs";
+[@bs.module] external make_ : config => t = "eosjs";
+
+let make =
+    (
+      ~httpEndpoint,
+      ~verbose=?,
+      ~keyProvider=?,
+      ~chainId=?,
+      ~expireInSeconds=?,
+      ~sign=?,
+      ~broadcast=?,
+      (),
+    )
+    : t =>
+  config(
+    ~httpEndpoint,
+    ~verbose?,
+    ~keyProvider?,
+    ~chainId?,
+    ~expireInSeconds?,
+    ~sign?,
+    ~broadcast?,
+    (),
+  )
+  |> make_;
+
+let thenDecode = (decode, promise) =>
+  promise |> Js.Promise.then_(d => d |> decode |> Js.Promise.resolve);
 
 [@bs.send]
 external getInfoJson :
   (t, [@bs.as {json|true|json}] _) => Js.Promise.t(Js.Json.t) =
   "getInfo";
 
-let getInfo = t =>
-  t |. getInfoJson |> Eos_Api.thenDecode(Eos_Api.Info.decode);
+let getInfo = t => t |. getInfoJson |> thenDecode(Info.decode);
 
 [@bs.deriving abstract]
 type tableRowsArgs = {
@@ -48,21 +77,47 @@ type tableRowsArgs = {
 external getTableRowsRaw : (t, tableRowsArgs) => Js.Promise.t(Js.Json.t) =
   "getTableRows";
 
+let getTableRows =
+    (
+      t,
+      ~rowDecoder,
+      ~code,
+      ~scope,
+      ~table,
+      ~json=true,
+      ~tableKey=?,
+      ~lowerBound=?,
+      ~upperBound=?,
+      ~limit=?,
+      (),
+    )
+    : Js.Promise.t(TableRows.t('row)) =>
+  tableRowsArgs(
+    ~code=code |> AccountName.toString,
+    ~scope=scope |> AccountName.toString,
+    ~table=table |> TableName.toString,
+    ~json,
+    ~tableKey=?tableKey |. Belt.Option.map(TableName.toString),
+    ~lowerBound=?lowerBound |. Belt.Option.map(BigNumber.toString),
+    ~upperBound=?upperBound |. Belt.Option.map(BigNumber.toString),
+    ~limit?,
+    (),
+  )
+  |> getTableRowsRaw(t)
+  |> thenDecode(TableRows.decode(rowDecoder));
+
+let getTableSingleton =
+    (t, ~rowDecoder, ~code, ~scope, ~table, ~json=true, ())
+    : Js.Promise.t(option('row)) =>
+  getTableRows(t, ~rowDecoder, ~code, ~scope, ~table, ~json, ~limit=1, ())
+  |> Js.Promise.then_((tableRows: TableRows.t('row)) =>
+       tableRows.rows |. Belt.Array.get(0) |. Js.Promise.resolve
+     );
+
 [@bs.send]
 external getCodeRaw : (t, string) => Js.Promise.t(Js.Json.t) = "getCode";
 
-module Account = {
-  type t = {
-    accountName: Eos_Types.AccountName.t,
-    privileged: bool,
-    lastCodeUpdate: Js.Date.t,
-    created: Js.Date.t,
-    coreLiquidBalance: Eos_Types.Asset.t,
-    ramQuota: BigNumber.t,
-    netWeight: BigNumber.t,
-    cpuWeight: BigNumber.t,
-    netLimit: BigNumber.t,
-    cpuLimit: BigNumber.t,
-    ramUsage: BigNumber.t,
-  };
-};
+let getCode = (t, ~accountName) =>
+  t
+  |. getCodeRaw(accountName |. AccountName.toString)
+  |> thenDecode(Code.decode);

@@ -94,6 +94,52 @@ describe("PrivateKey", () => {
   );
 });
 
+describe("AccountName", () =>
+  describe("resultFromString", () => {
+    test("empty names", () =>
+      ""
+      |. Eos.AccountName.resultFromString
+      |. expect
+      |> toEqual(Belt.Result.Error("Empty string is not a name"))
+    );
+    test("all dots", () =>
+      ".."
+      |. Eos.AccountName.resultFromString
+      |. expect
+      |> toEqual(
+           Belt.Result.Error("Names must include characters other than dots"),
+         )
+    );
+    test("capital letters", () =>
+      "helloWORLD"
+      |. Eos.AccountName.resultFromString
+      |. expect
+      |> toEqual(Belt.Result.Error("Invalid character: 'W'"))
+    );
+
+    test("more than 12 characters", () =>
+      "1234512345123"
+      |. Eos.AccountName.resultFromString
+      |. expect
+      |> toEqual(Belt.Result.Error("A name can be up to 12 characters long"))
+    );
+
+    test("numbers greater than 5", () =>
+      "qwerty6"
+      |. Eos.AccountName.resultFromString
+      |. expect
+      |> toEqual(Belt.Result.Error("Invalid character: '6'"))
+    );
+
+    test("valid name", () =>
+      "hello"
+      |. Eos.AccountName.resultFromString
+      |. expect
+      |> toEqual(Belt.Result.Ok("hello" |. Eos.AccountName.fromString))
+    );
+  })
+);
+
 let httpEndpoint = "http://api.eosnewyork.io";
 let chainId = "aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906";
 
@@ -103,7 +149,7 @@ describe("Info", () =>
   testPromise("get", ~timeout, () =>
     eos
     |. Eos.getInfo
-    |> Js.Promise.then_((info: Eos.Api.Info.t) =>
+    |> Js.Promise.then_((info: Eos.Info.t) =>
          info.headBlockNum
          |> expect
          |> toBeGreaterThan(6287534)
@@ -124,7 +170,7 @@ describe("TableRows", () =>
          ~table=Eos.tableName("producers"),
          (),
        )
-    |> Js.Promise.then_((tableRows: Eos.Api.TableRows.t('asdf)) =>
+    |> Js.Promise.then_((tableRows: Eos.TableRows.t('asdf)) =>
          tableRows.rows
          |> Js.Array.length
          |> expect
@@ -138,7 +184,7 @@ describe("Code", () =>
   testPromise("getCode", ~timeout, () =>
     eos
     |. Eos.getCode(~accountName=Eos.accountName("eosio"))
-    |> Js.Promise.then_((code: Eos.Api.Code.t) =>
+    |> Js.Promise.then_((code: Eos.Code.t) =>
          (
            code.accountName |. Eos.AccountName.toString,
            code.abi |. Belt.Option.isSome,
@@ -166,6 +212,25 @@ describe("BlockTimestamp", () => {
     json
     |. Eos.BlockTimestamp.decode
     |. Eos.BlockTimestamp.encode
+    |. expect
+    |> toEqual(json)
+  );
+});
+
+describe("TimePoint", () => {
+  let json = "1529459862123456" |. Js.Json.string;
+  test("decode", () =>
+    json
+    |. Eos.TimePoint.decode
+    |. Eos.TimePoint.toDate
+    |. Js.Date.toISOString
+    |. expect
+    |> toEqual("2018-06-20T01:57:42.123Z")
+  );
+  test("encode", () =>
+    json
+    |. Eos.TimePoint.decode
+    |. Eos.TimePoint.encode
     |. expect
     |> toEqual(json)
   );

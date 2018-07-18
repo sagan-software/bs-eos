@@ -1,8 +1,5 @@
 open Eos_Types;
 
-let thenDecode = (decode, promise) =>
-  promise |> Js.Promise.then_(d => d |> decode |> Js.Promise.resolve);
-
 module Info = {
   type t = {
     serverVersion: string,
@@ -31,12 +28,28 @@ module Info = {
       headBlockProducer:
         d |> field("head_block_producer", AccountName.decode),
       virtualBlockCpuLimit:
-        d |> field("virtual_block_cpu_limit", BigNumber.decodeAny),
+        d |> field("virtual_block_cpu_limit", BigNumber.decode),
       virtualBlockNetLimit:
-        d |> field("virtual_block_net_limit", BigNumber.decodeAny),
-      blockCpuLimit: d |> field("block_cpu_limit", BigNumber.decodeAny),
-      blockNetLimit: d |> field("block_net_limit", BigNumber.decodeAny),
+        d |> field("virtual_block_net_limit", BigNumber.decode),
+      blockCpuLimit: d |> field("block_cpu_limit", BigNumber.decode),
+      blockNetLimit: d |> field("block_net_limit", BigNumber.decode),
     };
+};
+
+module Account = {
+  type t = {
+    accountName: AccountName.t,
+    privileged: bool,
+    lastCodeUpdate: Js.Date.t,
+    created: Js.Date.t,
+    coreLiquidBalance: Asset.t,
+    ramQuota: BigNumber.t,
+    netWeight: BigNumber.t,
+    cpuWeight: BigNumber.t,
+    netLimit: BigNumber.t,
+    cpuLimit: BigNumber.t,
+    ramUsage: BigNumber.t,
+  };
 };
 
 module Transaction = {
@@ -113,6 +126,8 @@ module TableRows = {
     ...tableRows,
     rows: tableRows.rows |. Belt.Array.map(fn),
   };
+
+  let singleton = tableRows => tableRows.rows |. Belt.Array.get(0);
 };
 
 module Code = {
