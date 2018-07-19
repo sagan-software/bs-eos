@@ -4,7 +4,7 @@
 var Eos = require("../src/Eos.js");
 var Jest = require("@glennsl/bs-jest/src/jest.js");
 var Curry = require("bs-platform/lib/js/curry.js");
-var Eosio_System = require("../src/Eosio_System.js");
+var Eosio = require("../src/Eosio.js");
 
 var httpEndpoint = "http://api.eosnewyork.io";
 
@@ -14,13 +14,13 @@ var eos = Eos.make(httpEndpoint, undefined, undefined, chainId, undefined, undef
 
 describe("Eosio.System", (function () {
         Jest.testPromise(10000, "getProducers", (function () {
-                return Curry._6(Eosio_System.getProducers(eos), undefined, undefined, undefined, undefined, 50, /* () */0).then((function (producers) {
+                return Curry._6(Eosio.getProducers(eos), undefined, undefined, undefined, undefined, 50, /* () */0).then((function (producers) {
                               return Promise.resolve(Jest.Expect[/* toBe */2](50, Jest.Expect[/* expect */0](producers[/* rows */0].length)));
                             }));
               }));
         return Jest.testPromise(10000, "getGlobalState", (function () {
-                      return Curry._2(Eosio_System.getGlobalState(eos), undefined, /* () */0).then((function (globalState) {
-                                    return Promise.resolve(globalState !== undefined ? Jest.Expect[/* toBeGreaterThan */5](100, Jest.Expect[/* expect */0](globalState[/* perVoteBucket */22])) : Jest.fail("global state is empty"));
+                      return Curry._2(Eosio.getGlobalState(eos), undefined, /* () */0).then((function (globalState) {
+                                    return Promise.resolve(globalState !== undefined ? Jest.Expect[/* toBe */2](true, Jest.Expect[/* expect */0](globalState[/* perVoteBucket */22].gt(100))) : Jest.fail("global state is empty"));
                                   }));
                     }));
       }));

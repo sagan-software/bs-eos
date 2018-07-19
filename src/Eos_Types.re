@@ -218,6 +218,11 @@ module Asset = {
   [@bs.module "eosjs"] [@bs.scope ("modules", "format")]
   external toString : t => string = "printAsset";
 
+  let fromBigNumber = (bigNumber, ~precision, ~symbol) => {
+    let amount = bigNumber |. BigNumber.toFixedDp(precision);
+    {j|$amount $symbol|j} |. fromString;
+  };
+
   let decode = Json.Decode.(string |> map(fromString));
   let encode = d => d |> toString |> Json.Encode.string;
 
@@ -249,20 +254,20 @@ module TransactionId =
 
 module AccountPermission = {
   type t = {
-    account: AccountName.t,
+    actor: AccountName.t,
     permission: PermissionName.t,
   };
 
   let decode = x =>
     Json.Decode.{
-      account: x |> field("account", AccountName.decode),
+      actor: x |> field("actor", AccountName.decode),
       permission: x |> field("permission", PermissionName.decode),
     };
 
   let encode = x =>
     Json.Encode.(
       object_([
-        ("account", x.account |> AccountName.encode),
+        ("actor", x.actor |> AccountName.encode),
         ("permission", x.permission |> PermissionName.encode),
       ])
     );

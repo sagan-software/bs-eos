@@ -89,6 +89,8 @@ var getInfo = Eos_Js.getInfo;
 
 var getCode = Eos_Js.getCode;
 
+var getAccount = Eos_Js.getAccount;
+
 var getTableRows = Eos_Js.getTableRows;
 
 var getTableSingleton = Eos_Js.getTableSingleton;
@@ -128,6 +130,7 @@ exports.Js = Js;
 exports.make = make;
 exports.getInfo = getInfo;
 exports.getCode = getCode;
+exports.getAccount = getAccount;
 exports.getTableRows = getTableRows;
 exports.getTableSingleton = getTableSingleton;
 exports.accountName = accountName;

@@ -8,6 +8,8 @@ var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Belt_Option = require("bs-platform/lib/js/belt_Option.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var Json_encode = require("@glennsl/bs-json/src/Json_encode.bs.js");
+var Eosio_System = require("./Eosio_System.js");
+var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 
 function decode(d) {
   return /* record */[
@@ -27,7 +29,100 @@ function decode(d) {
 
 var Info = /* module */[/* decode */decode];
 
-var Account = /* module */[];
+function limit(x) {
+  return /* record */[
+          /* used */Json_decode.field("used", BigNumber.decode, x),
+          /* available */Json_decode.field("available", BigNumber.decode, x),
+          /* max */Json_decode.field("max", BigNumber.decode, x)
+        ];
+}
+
+function permissionKey(x) {
+  return /* record */[
+          /* key */Json_decode.field("key", Eos_Types.PublicKey[/* decode */0], x),
+          /* weight */Json_decode.field("weight", Json_decode.$$int, x)
+        ];
+}
+
+function permissionAccount(x) {
+  return /* record */[
+          /* permission */Json_decode.field("permission", Eos_Types.AccountPermission[/* decode */0], x),
+          /* weight */Json_decode.field("weight", Json_decode.$$int, x)
+        ];
+}
+
+function permissionRequiredAuth(x) {
+  return /* record */[
+          /* threshold */Json_decode.field("threshold", Json_decode.$$int, x),
+          /* keys */Json_decode.field("keys", (function (param) {
+                  return Json_decode.array(permissionKey, param);
+                }), x),
+          /* accounts */Json_decode.field("accounts", (function (param) {
+                  return Json_decode.array(permissionAccount, param);
+                }), x)
+        ];
+}
+
+function permission(x) {
+  return /* record */[
+          /* permName */Json_decode.field("perm_name", Eos_Types.PermissionName[/* decode */0], x),
+          /* parent */Json_decode.field("parent", Eos_Types.PermissionName[/* decode */0], x),
+          /* requiredAuth */Json_decode.field("required_auth", permissionRequiredAuth, x)
+        ];
+}
+
+function nullableOption(decoder) {
+  return (function (param) {
+      return Json_decode.map((function (prim) {
+                    if (prim === null) {
+                      return undefined;
+                    } else {
+                      return Js_primitive.some(prim);
+                    }
+                  }), (function (param) {
+                    return Json_decode.nullable(decoder, param);
+                  }), param);
+    });
+}
+
+function t(x) {
+  return /* record */[
+          /* accountName */Json_decode.field("account_name", Eos_Types.AccountName[/* decode */0], x),
+          /* headBlockNum */Json_decode.field("head_block_num", Json_decode.$$int, x),
+          /* headBlockTime */Json_decode.field("head_block_time", Eos_Types.BlockTimestamp[/* decode */0], x),
+          /* privileged */Json_decode.field("privileged", Json_decode.bool, x),
+          /* lastCodeUpdate */Json_decode.field("last_code_update", Eos_Types.BlockTimestamp[/* decode */0], x),
+          /* created */Json_decode.field("created", Eos_Types.BlockTimestamp[/* decode */0], x),
+          /* coreLiquidBalance */Json_decode.field("core_liquid_balance", Eos_Types.Asset[/* decode */1], x),
+          /* ramQuota */Json_decode.field("ram_quota", BigNumber.decode, x),
+          /* netWeight */Json_decode.field("net_weight", BigNumber.decode, x),
+          /* cpuWeight */Json_decode.field("cpu_weight", BigNumber.decode, x),
+          /* netLimit */Json_decode.field("net_limit", limit, x),
+          /* cpuLimit */Json_decode.field("cpu_limit", limit, x),
+          /* ramUsage */Json_decode.field("ram_usage", BigNumber.decode, x),
+          /* permissions */Json_decode.field("permissions", (function (param) {
+                  return Json_decode.array(permission, param);
+                }), x),
+          /* totalResources */Json_decode.field("total_resources", nullableOption(Eosio_System.UserResources[/* decode */0]), x),
+          /* selfDelegatedBandwidth */Json_decode.field("self_delegated_bandwidth", nullableOption(Eosio_System.DelegatedBandwidth[/* decode */0]), x),
+          /* voterInfo */Json_decode.field("voter_info", nullableOption(Eosio_System.VoterInfo[/* decode */0]), x)
+        ];
+}
+
+var Decode = /* module */[
+  /* limit */limit,
+  /* permissionKey */permissionKey,
+  /* permissionAccount */permissionAccount,
+  /* permissionRequiredAuth */permissionRequiredAuth,
+  /* permission */permission,
+  /* nullableOption */nullableOption,
+  /* t */t
+];
+
+var Account = /* module */[
+  /* Decode */Decode,
+  /* decode */t
+];
 
 var Transaction = /* module */[];
 

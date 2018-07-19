@@ -121,3 +121,12 @@ let getCode = (t, ~accountName) =>
   t
   |. getCodeRaw(accountName |. AccountName.toString)
   |> thenDecode(Code.decode);
+
+[@bs.send]
+external getAccountRaw : (t, string) => Js.Promise.t(Js.Json.t) =
+  "getAccount";
+
+let getAccount = (t, ~accountName) =>
+  t
+  |. getAccountRaw(accountName |. AccountName.toString)
+  |> thenDecode(Account.decode);

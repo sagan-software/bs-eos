@@ -82,10 +82,15 @@ function getCode(t, accountName) {
   return thenDecode(Eos_Chain.Code[/* decode */0], t.getCode(Eos_Types.AccountName[/* toString */4](accountName)));
 }
 
+function getAccount(t, accountName) {
+  return thenDecode(Eos_Chain.Account[/* decode */1], t.getAccount(Eos_Types.AccountName[/* toString */4](accountName)));
+}
+
 exports.make = make;
 exports.thenDecode = thenDecode;
 exports.getInfo = getInfo;
 exports.getTableRows = getTableRows;
 exports.getTableSingleton = getTableSingleton;
 exports.getCode = getCode;
+exports.getAccount = getAccount;
 /* eosjs Not a pure module */

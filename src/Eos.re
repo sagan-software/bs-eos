@@ -5,6 +5,7 @@ module Js = Eos_Js;
 let make = Js.make;
 let getInfo = Js.getInfo;
 let getCode = Js.getCode;
+let getAccount = Js.getAccount;
 let getTableRows = Js.getTableRows;
 let getTableSingleton = Js.getTableSingleton;
 

@@ -28,7 +28,7 @@
 
 "@sagan-software/bs-bignumber@sagan-software/bs-bignumber":
   version "0.1.0"
-  resolved "https://codeload.github.com/sagan-software/bs-bignumber/tar.gz/542027a2848fec6aed9ce9608a6d70cc4fccf852"
+  resolved "https://codeload.github.com/sagan-software/bs-bignumber/tar.gz/50e8025be5da286f444e5bec4db1f93ad809e1eb"
   dependencies:
     bignumber.js "^7.2.1"
 

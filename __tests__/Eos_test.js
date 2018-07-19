@@ -22,10 +22,10 @@ describe("Asset", (function () {
                 return Jest.Expect[/* toBe */2]("EOS", Jest.Expect[/* expect */0](Eosjs.modules.format.parseAsset("10.0000 EOS").symbol));
               }));
         Jest.test("decode", (function () {
-                return Jest.Expect[/* toBe */2]("10.0000 EOS", Jest.Expect[/* expect */0](Eosjs.modules.format.printAsset(Eos_Types.Asset[/* decode */0]("10.0000 EOS"))));
+                return Jest.Expect[/* toBe */2]("10.0000 EOS", Jest.Expect[/* expect */0](Eosjs.modules.format.printAsset(Eos_Types.Asset[/* decode */1]("10.0000 EOS"))));
               }));
         return Jest.test("encode", (function () {
-                      return Jest.Expect[/* toBe */2]("10.0000 EOS", Jest.Expect[/* expect */0](Eos_Types.Asset[/* encode */1](Eosjs.modules.format.parseAsset("10.0000 EOS"))));
+                      return Jest.Expect[/* toBe */2]("10.0000 EOS", Jest.Expect[/* expect */0](Eos_Types.Asset[/* encode */2](Eosjs.modules.format.parseAsset("10.0000 EOS"))));
                     }));
       }));
 
@@ -118,6 +118,26 @@ describe("Code", (function () {
                                                   ], Jest.Expect[/* expect */0](/* tuple */[
                                                         Eos_Types.AccountName[/* toString */4](code[/* accountName */0]),
                                                         Belt_Option.isSome(code[/* abi */4])
+                                                      ])));
+                                  }));
+                    }));
+      }));
+
+describe("Account", (function () {
+        return Jest.testPromise(10000, "getAccount", (function () {
+                      return Eos.getAccount(eos, Eos.accountName("scatterfunds")).then((function (account) {
+                                    return Promise.resolve(Jest.Expect[/* toEqual */12](/* tuple */[
+                                                    true,
+                                                    true,
+                                                    true,
+                                                    true,
+                                                    true
+                                                  ], Jest.Expect[/* expect */0](/* tuple */[
+                                                        Eos_Types.AccountName[/* toString */4](account[/* accountName */0]) === "scatterfunds",
+                                                        account[/* permissions */13].length > 0,
+                                                        Belt_Option.isSome(account[/* totalResources */14]),
+                                                        Belt_Option.isSome(account[/* selfDelegatedBandwidth */15]),
+                                                        Belt_Option.isSome(account[/* voterInfo */16])
                                                       ])));
                                   }));
                     }));

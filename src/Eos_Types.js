@@ -907,6 +907,11 @@ var PrivateKey = /* module */[
   /* toPublic */toPublic
 ];
 
+function fromBigNumber(bigNumber, precision, symbol) {
+  var amount = bigNumber.toFixed(precision);
+  return Eosjs.modules.format.parseAsset("" + (String(amount) + (" " + (String(symbol) + ""))));
+}
+
 function decode$11(param) {
   return Json_decode.map((function (prim) {
                 return Eosjs.modules.format.parseAsset(prim);
@@ -918,6 +923,7 @@ function encode$11(d) {
 }
 
 var Asset = /* module */[
+  /* fromBigNumber */fromBigNumber,
   /* decode */decode$11,
   /* encode */encode$11
 ];
@@ -1052,7 +1058,7 @@ var TransactionId = /* module */[
 
 function decode$16(x) {
   return /* record */[
-          /* account */Json_decode.field("account", decode, x),
+          /* actor */Json_decode.field("actor", decode, x),
           /* permission */Json_decode.field("permission", decode$1, x)
         ];
 }
@@ -1060,8 +1066,8 @@ function decode$16(x) {
 function encode$16(x) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
-                "account",
-                x[/* account */0]
+                "actor",
+                x[/* actor */0]
               ],
               /* :: */[
                 /* tuple */[

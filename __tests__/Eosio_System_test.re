@@ -10,7 +10,7 @@ let eos = Eos.make(~httpEndpoint, ~chainId, ());
 describe("Eosio.System", () => {
   testPromise("getProducers", ~timeout, () =>
     eos
-    |. Eosio.System.getProducers(~limit=50, ())
+    |. Eosio.getProducers(~limit=50, ())
     |> Js.Promise.then_(
          (producers: Eos.TableRows.t(Eosio.System.ProducerInfo.t)) =>
          producers.rows
@@ -23,12 +23,15 @@ describe("Eosio.System", () => {
 
   testPromise("getGlobalState", ~timeout, () =>
     eos
-    |. Eosio.System.getGlobalState()
+    |. Eosio.getGlobalState()
     |> Js.Promise.then_((globalState: option(Eosio.System.GlobalState.t)) =>
          (
            switch (globalState) {
            | Some(globalState) =>
-             globalState.perVoteBucket |. expect |> toBeGreaterThan(100)
+             globalState.perVoteBucket
+             |. BigNumber.gtInt(100)
+             |. expect
+             |> toBe(true)
            | None => fail("global state is empty")
            }
          )

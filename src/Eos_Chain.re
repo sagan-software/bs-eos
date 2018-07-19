@@ -37,19 +37,124 @@ module Info = {
 };
 
 module Account = {
+  type limit = {
+    used: BigNumber.t,
+    available: BigNumber.t,
+    max: BigNumber.t,
+  };
+
+  type permissionKey = {
+    key: PublicKey.t,
+    weight: int,
+  };
+
+  type permissionAccount = {
+    permission: AccountPermission.t,
+    weight: int,
+  };
+
+  type permissionRequiredAuth = {
+    threshold: int,
+    keys: array(permissionKey),
+    accounts: array(permissionAccount),
+    /* waits */
+  };
+
+  type permission = {
+    permName: PermissionName.t,
+    parent: PermissionName.t,
+    requiredAuth: permissionRequiredAuth,
+  };
+
   type t = {
     accountName: AccountName.t,
+    headBlockNum: int,
+    headBlockTime: BlockTimestamp.t,
     privileged: bool,
-    lastCodeUpdate: Js.Date.t,
-    created: Js.Date.t,
+    lastCodeUpdate: BlockTimestamp.t,
+    created: BlockTimestamp.t,
     coreLiquidBalance: Asset.t,
     ramQuota: BigNumber.t,
     netWeight: BigNumber.t,
     cpuWeight: BigNumber.t,
-    netLimit: BigNumber.t,
-    cpuLimit: BigNumber.t,
+    netLimit: limit,
+    cpuLimit: limit,
     ramUsage: BigNumber.t,
+    permissions: array(permission),
+    totalResources: option(Eosio_System.UserResources.t),
+    selfDelegatedBandwidth: option(Eosio_System.DelegatedBandwidth.t),
+    /* refundRequest:  */
+    voterInfo: option(Eosio_System.VoterInfo.t),
   };
+
+  module Decode = {
+    open Json.Decode;
+
+    let limit = x => {
+      used: x |> field("used", BigNumber.decode),
+      available: x |> field("available", BigNumber.decode),
+      max: x |> field("max", BigNumber.decode),
+    };
+
+    let permissionKey = x => {
+      key: x |> field("key", PublicKey.decode),
+      weight: x |> field("weight", int),
+    };
+
+    let permissionAccount = x => {
+      permission: x |> field("permission", AccountPermission.decode),
+      weight: x |> field("weight", int),
+    };
+
+    let permissionRequiredAuth = x => {
+      threshold: x |> field("threshold", int),
+      keys: x |> field("keys", array(permissionKey)),
+      accounts: x |> field("accounts", array(permissionAccount)),
+    };
+
+    let permission = x => {
+      permName: x |> field("perm_name", PermissionName.decode),
+      parent: x |> field("parent", PermissionName.decode),
+      requiredAuth: x |> field("required_auth", permissionRequiredAuth),
+    };
+
+    let nullableOption = decoder =>
+      decoder |> Json.Decode.nullable |> Json.Decode.map(Js.Null.toOption);
+
+    let t = x => {
+      accountName: x |> field("account_name", AccountName.decode),
+      headBlockNum: x |> field("head_block_num", int),
+      headBlockTime: x |> field("head_block_time", BlockTimestamp.decode),
+      privileged: x |> field("privileged", bool),
+      lastCodeUpdate: x |> field("last_code_update", BlockTimestamp.decode),
+      created: x |> field("created", BlockTimestamp.decode),
+      coreLiquidBalance: x |> field("core_liquid_balance", Asset.decode),
+      ramQuota: x |> field("ram_quota", BigNumber.decode),
+      netWeight: x |> field("net_weight", BigNumber.decode),
+      cpuWeight: x |> field("cpu_weight", BigNumber.decode),
+      netLimit: x |> field("net_limit", limit),
+      cpuLimit: x |> field("cpu_limit", limit),
+      ramUsage: x |> field("ram_usage", BigNumber.decode),
+      permissions: x |> field("permissions", array(permission)),
+      totalResources:
+        x
+        |> field(
+             "total_resources",
+             nullableOption(Eosio_System.UserResources.decode),
+           ),
+      selfDelegatedBandwidth:
+        x
+        |> field(
+             "self_delegated_bandwidth",
+             nullableOption(Eosio_System.DelegatedBandwidth.decode),
+           ),
+      voterInfo:
+        x
+        |> field("voter_info", nullableOption(Eosio_System.VoterInfo.decode)),
+    };
+  };
+
+  let decode = Decode.t;
 };
 
 module Transaction = {
