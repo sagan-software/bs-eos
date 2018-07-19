@@ -10,7 +10,7 @@ var BigNumber = require("@sagan-software/bs-bignumber/src/BigNumber.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var Json_encode = require("@glennsl/bs-json/src/Json_encode.bs.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
-var BignumberJs = require("bignumber.js");
+var BignumberJs = require("bignumber.js/bignumber.js");
 
 function MakeOpaqueStringType() {
   var fromString = function (t) {
