@@ -130,3 +130,9 @@ let getAccount = (t, ~accountName) =>
   t
   |. getAccountRaw(accountName |. AccountName.toString)
   |> thenDecode(Account.decode);
+
+[@bs.send]
+external getBlockNumRaw : (t, int) => Js.Promise.t(Js.Json.t) = "getBlock";
+
+[@bs.send]
+external getBlockIdRaw : (t, string) => Js.Promise.t(Js.Json.t) = "getBlock";
