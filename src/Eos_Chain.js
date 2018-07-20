@@ -14,20 +14,100 @@ var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 function decode(d) {
   return /* record */[
           /* serverVersion */Json_decode.field("server_version", Json_decode.string, d),
+          /* chainId */Json_decode.field("chain_id", Json_decode.string, d),
           /* headBlockNum */Json_decode.field("head_block_num", Json_decode.$$int, d),
           /* lastIrreversibleBlockNum */Json_decode.field("last_irreversible_block_num", Json_decode.$$int, d),
           /* lastIrreversibleBlockId */Json_decode.field("last_irreversible_block_id", Eos_Types.BlockId[/* decode */0], d),
           /* headBlockId */Json_decode.field("head_block_id", Eos_Types.BlockId[/* decode */0], d),
-          /* headBlockTime */Json_decode.field("head_block_time", Json_decode.date, d),
+          /* headBlockTime */Json_decode.field("head_block_time", Eos_Types.BlockTimestamp[/* decode */0], d),
           /* headBlockProducer */Json_decode.field("head_block_producer", Eos_Types.AccountName[/* decode */0], d),
-          /* virtualBlockCpuLimit */Json_decode.field("virtual_block_cpu_limit", BigNumber.decode, d),
-          /* virtualBlockNetLimit */Json_decode.field("virtual_block_net_limit", BigNumber.decode, d),
-          /* blockCpuLimit */Json_decode.field("block_cpu_limit", BigNumber.decode, d),
-          /* blockNetLimit */Json_decode.field("block_net_limit", BigNumber.decode, d)
+          /* virtualBlockCpuLimit */Json_decode.field("virtual_block_cpu_limit", Json_decode.$$int, d),
+          /* virtualBlockNetLimit */Json_decode.field("virtual_block_net_limit", Json_decode.$$int, d),
+          /* blockCpuLimit */Json_decode.field("block_cpu_limit", Json_decode.$$int, d),
+          /* blockNetLimit */Json_decode.field("block_net_limit", Json_decode.$$int, d)
         ];
 }
 
-var Info = /* module */[/* decode */decode];
+function encode(x) {
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "server_version",
+                x[/* serverVersion */0]
+              ],
+              /* :: */[
+                /* tuple */[
+                  "chain_id",
+                  x[/* chainId */1]
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "head_block_num",
+                    x[/* headBlockNum */2]
+                  ],
+                  /* :: */[
+                    /* tuple */[
+                      "last_irreversible_block_num",
+                      x[/* lastIrreversibleBlockNum */3]
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "last_irreversible_block_id",
+                        Eos_Types.BlockId[/* encode */1](x[/* lastIrreversibleBlockId */4])
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "head_block_id",
+                          Eos_Types.BlockId[/* encode */1](x[/* headBlockId */5])
+                        ],
+                        /* :: */[
+                          /* tuple */[
+                            "head_block_time",
+                            Eos_Types.BlockTimestamp[/* encode */1](x[/* headBlockTime */6])
+                          ],
+                          /* :: */[
+                            /* tuple */[
+                              "head_block_producer",
+                              Eos_Types.AccountName[/* encode */1](x[/* headBlockProducer */7])
+                            ],
+                            /* :: */[
+                              /* tuple */[
+                                "virtual_block_cpu_limit",
+                                x[/* virtualBlockCpuLimit */8]
+                              ],
+                              /* :: */[
+                                /* tuple */[
+                                  "virtual_block_net_limit",
+                                  x[/* virtualBlockNetLimit */9]
+                                ],
+                                /* :: */[
+                                  /* tuple */[
+                                    "block_cpu_limit",
+                                    x[/* blockCpuLimit */10]
+                                  ],
+                                  /* :: */[
+                                    /* tuple */[
+                                      "block_net_limit",
+                                      x[/* blockNetLimit */11]
+                                    ],
+                                    /* [] */0
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]);
+}
+
+var Info = /* module */[
+  /* decode */decode,
+  /* encode */encode
+];
 
 function limit(x) {
   return /* record */[
@@ -166,7 +246,7 @@ function decode$2(d) {
         ];
 }
 
-function encode(d) {
+function encode$1(d) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "account_name",
@@ -202,7 +282,7 @@ function encode(d) {
 
 var Code = /* module */[
   /* decode */decode$2,
-  /* encode */encode
+  /* encode */encode$1
 ];
 
 exports.Info = Info;

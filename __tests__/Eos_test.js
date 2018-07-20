@@ -3,10 +3,21 @@
 
 var Eos = require("../src/Eos.js");
 var Jest = require("@glennsl/bs-jest/src/jest.js");
+var Json = require("@glennsl/bs-json/src/Json.bs.js");
 var Block = require("bs-platform/lib/js/block.js");
+var Curry = require("bs-platform/lib/js/curry.js");
 var Eosjs = require("eosjs");
+var Eos_Chain = require("../src/Eos_Chain.js");
 var Eos_Types = require("../src/Eos_Types.js");
 var Belt_Option = require("bs-platform/lib/js/belt_Option.js");
+
+function decodeEncodeTest(raw, decode, encode) {
+  var parsed = Json.parseOrRaise(raw);
+  var stringified = JSON.stringify(parsed, null, 4);
+  return Jest.test("decode/encode", (function () {
+                return Jest.Expect[/* toEqual */12](stringified, Jest.Expect[/* expect */0](JSON.stringify(Curry._1(encode, Curry._1(decode, parsed)), null, 4)));
+              }));
+}
 
 describe("Asset", (function () {
         Jest.test("fromString/toString", (function () {
@@ -24,9 +35,10 @@ describe("Asset", (function () {
         Jest.test("decode", (function () {
                 return Jest.Expect[/* toBe */2]("10.0000 EOS", Jest.Expect[/* expect */0](Eosjs.modules.format.printAsset(Eos_Types.Asset[/* decode */1]("10.0000 EOS"))));
               }));
-        return Jest.test("encode", (function () {
-                      return Jest.Expect[/* toBe */2]("10.0000 EOS", Jest.Expect[/* expect */0](Eos_Types.Asset[/* encode */2](Eosjs.modules.format.parseAsset("10.0000 EOS"))));
-                    }));
+        Jest.test("encode", (function () {
+                return Jest.Expect[/* toBe */2]("10.0000 EOS", Jest.Expect[/* expect */0](Eos_Types.Asset[/* encode */2](Eosjs.modules.format.parseAsset("10.0000 EOS"))));
+              }));
+        return decodeEncodeTest("\"10.0000 EOS\"", Eos_Types.Asset[/* decode */1], Eos_Types.Asset[/* encode */2]);
       }));
 
 var publicKey = "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV";
@@ -90,11 +102,12 @@ var chainId = "aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906"
 var eos = Eos.make(httpEndpoint, undefined, undefined, chainId, undefined, undefined, undefined, /* () */0);
 
 describe("Info", (function () {
-        return Jest.testPromise(10000, "get", (function () {
-                      return Eos.getInfo(eos).then((function (info) {
-                                    return Promise.resolve(Jest.Expect[/* toBeGreaterThan */5](6287534, Jest.Expect[/* expect */0](info[/* headBlockNum */1])));
-                                  }));
-                    }));
+        Jest.testPromise(10000, "get", (function () {
+                return Eos.getInfo(eos).then((function (info) {
+                              return Promise.resolve(Jest.Expect[/* toBeGreaterThan */5](6287534, Jest.Expect[/* expect */0](info[/* headBlockNum */2])));
+                            }));
+              }));
+        return decodeEncodeTest("{\n      \"server_version\": \"60947c0c\",\n      \"chain_id\": \"aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906\",\n      \"head_block_num\": 6869265,\n      \"last_irreversible_block_num\": 6868938,\n      \"last_irreversible_block_id\": \"0068cfcacdbbb76648e59011f1aae99b434452fc5f12e31ca15602985ec0c6c0\",\n      \"head_block_id\": \"0068d111ef257dbe56c8d0aa0b8196942fe7b148e6714187bd4a815ec313f4f3\",\n      \"head_block_time\": \"2018-07-20T15:45:57.500\",\n      \"head_block_producer\": \"eosswedenorg\",\n      \"virtual_block_cpu_limit\": 71861848,\n      \"virtual_block_net_limit\": 1048576000,\n      \"block_cpu_limit\": 191299,\n      \"block_net_limit\": 1045768\n    }", Eos_Chain.Info[/* decode */0], Eos_Chain.Info[/* encode */1]);
       }));
 
 function lazyDecoder(json) {
@@ -166,6 +179,7 @@ describe("TimePoint", (function () {
 var timeout = 10000;
 
 exports.timeout = timeout;
+exports.decodeEncodeTest = decodeEncodeTest;
 exports.publicKey = publicKey;
 exports.privateKey = privateKey;
 exports.httpEndpoint = httpEndpoint;

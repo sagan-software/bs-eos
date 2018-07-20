@@ -3,37 +3,59 @@ open Eos_Types;
 module Info = {
   type t = {
     serverVersion: string,
+    chainId: string,
     headBlockNum: int,
     lastIrreversibleBlockNum: int,
     lastIrreversibleBlockId: BlockId.t,
     headBlockId: BlockId.t,
-    headBlockTime: Js.Date.t,
+    headBlockTime: BlockTimestamp.t,
     headBlockProducer: AccountName.t,
-    virtualBlockCpuLimit: BigNumber.t,
-    virtualBlockNetLimit: BigNumber.t,
-    blockCpuLimit: BigNumber.t,
-    blockNetLimit: BigNumber.t,
+    virtualBlockCpuLimit: int,
+    virtualBlockNetLimit: int,
+    blockCpuLimit: int,
+    blockNetLimit: int,
   };
 
   let decode = d =>
     Json.Decode.{
       serverVersion: d |> field("server_version", string),
+      chainId: d |> field("chain_id", string),
       headBlockNum: d |> field("head_block_num", int),
       lastIrreversibleBlockNum:
         d |> field("last_irreversible_block_num", int),
       lastIrreversibleBlockId:
         d |> field("last_irreversible_block_id", BlockId.decode),
       headBlockId: d |> field("head_block_id", BlockId.decode),
-      headBlockTime: d |> field("head_block_time", date),
+      headBlockTime: d |> field("head_block_time", BlockTimestamp.decode),
       headBlockProducer:
         d |> field("head_block_producer", AccountName.decode),
-      virtualBlockCpuLimit:
-        d |> field("virtual_block_cpu_limit", BigNumber.decode),
-      virtualBlockNetLimit:
-        d |> field("virtual_block_net_limit", BigNumber.decode),
-      blockCpuLimit: d |> field("block_cpu_limit", BigNumber.decode),
-      blockNetLimit: d |> field("block_net_limit", BigNumber.decode),
+      virtualBlockCpuLimit: d |> field("virtual_block_cpu_limit", int),
+      virtualBlockNetLimit: d |> field("virtual_block_net_limit", int),
+      blockCpuLimit: d |> field("block_cpu_limit", int),
+      blockNetLimit: d |> field("block_net_limit", int),
     };
+
+  let encode = x =>
+    Json.Encode.(
+      [
+        ("server_version", x.serverVersion |. string),
+        ("chain_id", x.chainId |. string),
+        ("head_block_num", x.headBlockNum |. int),
+        ("last_irreversible_block_num", x.lastIrreversibleBlockNum |. int),
+        (
+          "last_irreversible_block_id",
+          x.lastIrreversibleBlockId |. BlockId.encode,
+        ),
+        ("head_block_id", x.headBlockId |. BlockId.encode),
+        ("head_block_time", x.headBlockTime |. BlockTimestamp.encode),
+        ("head_block_producer", x.headBlockProducer |. AccountName.encode),
+        ("virtual_block_cpu_limit", x.virtualBlockCpuLimit |. int),
+        ("virtual_block_net_limit", x.virtualBlockNetLimit |. int),
+        ("block_cpu_limit", x.blockCpuLimit |. int),
+        ("block_net_limit", x.blockNetLimit |. int),
+      ]
+      |. object_
+    );
 };
 
 module Account = {

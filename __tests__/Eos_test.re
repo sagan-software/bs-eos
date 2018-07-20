@@ -2,6 +2,20 @@ open Jest;
 
 let timeout = 10000;
 
+let decodeEncodeTest = (raw, decode, encode) => {
+  let parsed = raw |. Json.parseOrRaise;
+  let stringified = parsed |. Js.Json.stringifyWithSpace(4);
+
+  test("decode/encode", () =>
+    parsed
+    |. decode
+    |. encode
+    |. Js.Json.stringifyWithSpace(4)
+    |. Expect.expect
+    |> Expect.toEqual(stringified)
+  );
+};
+
 describe("Asset", () => {
   test("fromString/toString", () =>
     "10.0000 SYS"
@@ -51,6 +65,8 @@ describe("Asset", () => {
     |. Expect.expect
     |> Expect.toBe(Js.Json.string("10.0000 EOS"))
   );
+
+  decodeEncodeTest("\"10.0000 EOS\"", Eos.Asset.decode, Eos.Asset.encode);
 });
 
 let publicKey = "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV";
@@ -159,7 +175,7 @@ let chainId = "aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906"
 
 let eos = Eos.make(~httpEndpoint, ~chainId, ());
 
-describe("Info", () =>
+describe("Info", () => {
   testPromise("get", ~timeout, () =>
     eos
     |. Eos.getInfo
@@ -169,8 +185,26 @@ describe("Info", () =>
          |> Expect.toBeGreaterThan(6287534)
          |. Js.Promise.resolve
        )
-  )
-);
+  );
+  decodeEncodeTest(
+    {j|{
+      "server_version": "60947c0c",
+      "chain_id": "aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906",
+      "head_block_num": 6869265,
+      "last_irreversible_block_num": 6868938,
+      "last_irreversible_block_id": "0068cfcacdbbb76648e59011f1aae99b434452fc5f12e31ca15602985ec0c6c0",
+      "head_block_id": "0068d111ef257dbe56c8d0aa0b8196942fe7b148e6714187bd4a815ec313f4f3",
+      "head_block_time": "2018-07-20T15:45:57.500",
+      "head_block_producer": "eosswedenorg",
+      "virtual_block_cpu_limit": 71861848,
+      "virtual_block_net_limit": 1048576000,
+      "block_cpu_limit": 191299,
+      "block_net_limit": 1045768
+    }|j},
+    Eos.Info.decode,
+    Eos.Info.encode,
+  );
+});
 
 let lazyDecoder = (json: Js.Json.t) => json;
 
