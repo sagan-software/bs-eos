@@ -104,7 +104,7 @@ var eos = Eos.make(httpEndpoint, undefined, undefined, chainId, undefined, undef
 describe("Info", (function () {
         Jest.testPromise(10000, "get", (function () {
                 return Eos.getInfo(eos).then((function (info) {
-                              return Promise.resolve(Jest.Expect[/* toBeGreaterThan */5](6287534, Jest.Expect[/* expect */0](info[/* headBlockNum */2])));
+                              return Promise.resolve(Jest.Expect[/* toBeGreaterThan */5](6287534, Jest.Expect[/* expect */0](Eos_Types.BlockNum[/* toInt */4](info[/* headBlockNum */2]))));
                             }));
               }));
         return decodeEncodeTest("{\n      \"server_version\": \"60947c0c\",\n      \"chain_id\": \"aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906\",\n      \"head_block_num\": 6869265,\n      \"last_irreversible_block_num\": 6868938,\n      \"last_irreversible_block_id\": \"0068cfcacdbbb76648e59011f1aae99b434452fc5f12e31ca15602985ec0c6c0\",\n      \"head_block_id\": \"0068d111ef257dbe56c8d0aa0b8196942fe7b148e6714187bd4a815ec313f4f3\",\n      \"head_block_time\": \"2018-07-20T15:45:57.500\",\n      \"head_block_producer\": \"eosswedenorg\",\n      \"virtual_block_cpu_limit\": 71861848,\n      \"virtual_block_net_limit\": 1048576000,\n      \"block_cpu_limit\": 191299,\n      \"block_net_limit\": 1045768\n    }", Eos_Chain.Info[/* decode */0], Eos_Chain.Info[/* encode */1]);

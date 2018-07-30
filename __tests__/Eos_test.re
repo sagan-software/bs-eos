@@ -181,6 +181,7 @@ describe("Info", () => {
     |. Eos.getInfo
     |> Js.Promise.then_((info: Eos.Info.t) =>
          info.headBlockNum
+         |. Eos.BlockNum.toInt
          |. Expect.expect
          |> Expect.toBeGreaterThan(6287534)
          |. Js.Promise.resolve

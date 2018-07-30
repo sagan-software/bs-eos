@@ -63,7 +63,13 @@ var MerkleRoot = Eos_Types.MerkleRoot;
 
 var Signature = Eos_Types.Signature;
 
+var ChainId = Eos_Types.ChainId;
+
+var ServerVersion = Eos_Types.ServerVersion;
+
 var BlockId = Eos_Types.BlockId;
+
+var BlockNum = Eos_Types.BlockNum;
 
 var TransactionId = Eos_Types.TransactionId;
 
@@ -117,7 +123,10 @@ exports.Asset = Asset;
 exports.asset = asset;
 exports.MerkleRoot = MerkleRoot;
 exports.Signature = Signature;
+exports.ChainId = ChainId;
+exports.ServerVersion = ServerVersion;
 exports.BlockId = BlockId;
+exports.BlockNum = BlockNum;
 exports.TransactionId = TransactionId;
 exports.AccountPermission = AccountPermission;
 exports.Info = Info;

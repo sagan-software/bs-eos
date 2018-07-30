@@ -2,10 +2,10 @@ open Eos_Types;
 
 module Info = {
   type t = {
-    serverVersion: string,
-    chainId: string,
-    headBlockNum: int,
-    lastIrreversibleBlockNum: int,
+    serverVersion: ServerVersion.t,
+    chainId: ChainId.t,
+    headBlockNum: BlockNum.t,
+    lastIrreversibleBlockNum: BlockNum.t,
     lastIrreversibleBlockId: BlockId.t,
     headBlockId: BlockId.t,
     headBlockTime: BlockTimestamp.t,
@@ -18,11 +18,11 @@ module Info = {
 
   let decode = d =>
     Json.Decode.{
-      serverVersion: d |> field("server_version", string),
-      chainId: d |> field("chain_id", string),
-      headBlockNum: d |> field("head_block_num", int),
+      serverVersion: d |> field("server_version", ServerVersion.decode),
+      chainId: d |> field("chain_id", ChainId.decode),
+      headBlockNum: d |> field("head_block_num", BlockNum.decode),
       lastIrreversibleBlockNum:
-        d |> field("last_irreversible_block_num", int),
+        d |> field("last_irreversible_block_num", BlockNum.decode),
       lastIrreversibleBlockId:
         d |> field("last_irreversible_block_id", BlockId.decode),
       headBlockId: d |> field("head_block_id", BlockId.decode),
@@ -38,10 +38,13 @@ module Info = {
   let encode = x =>
     Json.Encode.(
       [
-        ("server_version", x.serverVersion |. string),
-        ("chain_id", x.chainId |. string),
-        ("head_block_num", x.headBlockNum |. int),
-        ("last_irreversible_block_num", x.lastIrreversibleBlockNum |. int),
+        ("server_version", x.serverVersion |. ServerVersion.encode),
+        ("chain_id", x.chainId |. ChainId.encode),
+        ("head_block_num", x.headBlockNum |. BlockNum.encode),
+        (
+          "last_irreversible_block_num",
+          x.lastIrreversibleBlockNum |. BlockNum.encode,
+        ),
         (
           "last_irreversible_block_id",
           x.lastIrreversibleBlockId |. BlockId.encode,
@@ -90,7 +93,7 @@ module Account = {
 
   type t = {
     accountName: AccountName.t,
-    headBlockNum: int,
+    headBlockNum: BlockNum.t,
     headBlockTime: BlockTimestamp.t,
     privileged: bool,
     lastCodeUpdate: BlockTimestamp.t,
@@ -145,7 +148,7 @@ module Account = {
 
     let t = x => {
       accountName: x |> field("account_name", AccountName.decode),
-      headBlockNum: x |> field("head_block_num", int),
+      headBlockNum: x |> field("head_block_num", BlockNum.decode),
       headBlockTime: x |> field("head_block_time", BlockTimestamp.decode),
       privileged: x |> field("privileged", bool),
       lastCodeUpdate: x |> field("last_code_update", BlockTimestamp.decode),
@@ -195,7 +198,7 @@ module Transaction = {
 
   type transaction = {
     expiration: Js.Date.t,
-    refBlockNum: int,
+    refBlockNum: BlockNum.t,
     refBlockPrefix: int,
     maxNetUsageWords: int,
     maxCpuUsageMs: int,
@@ -232,7 +235,7 @@ module Block = {
     producerSignature: Signature.t,
     transactions: array(Transaction.t),
     id: BlockId.t,
-    num: int,
+    num: BlockNum.t,
     refBlockPrefix: string,
   };
 };

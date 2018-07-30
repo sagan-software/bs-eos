@@ -45,6 +45,7 @@ module MakeOpaqueIntType = (Opaque: OpaqueIntTypeArgs) : OpaqueIntType => {
   include Opaque;
   let fromInt = t => t;
   let toInt = t => t;
+  let toBigNumber = t => BigNumber.fromInt(t);
   let decode = Json.Decode.(int |> map(fromInt));
   let encode = d => d |> toInt |> Json.Encode.int;
   let areEqual = (==);
@@ -242,9 +243,24 @@ module Signature =
     type t = string;
   });
 
+module ChainId =
+  MakeOpaqueStringType({
+    type t = string;
+  });
+
+module ServerVersion =
+  MakeOpaqueStringType({
+    type t = string;
+  });
+
 module BlockId =
   MakeChecksum256Type({
     type t = string;
+  });
+
+module BlockNum =
+  MakeOpaqueIntType({
+    type t = int;
   });
 
 module TransactionId =

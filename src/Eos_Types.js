@@ -1016,7 +1016,7 @@ function isEmpty$13(t) {
 
 var areEqual$13 = Caml_obj.caml_equal;
 
-var BlockId = /* module */[
+var ChainId = /* module */[
   /* decode */decode$14,
   /* encode */encode$14,
   /* areEqual */areEqual$13,
@@ -1047,7 +1047,7 @@ function isEmpty$14(t) {
 
 var areEqual$14 = Caml_obj.caml_equal;
 
-var TransactionId = /* module */[
+var ServerVersion = /* module */[
   /* decode */decode$15,
   /* encode */encode$15,
   /* areEqual */areEqual$14,
@@ -1056,14 +1056,102 @@ var TransactionId = /* module */[
   /* isEmpty */isEmpty$14
 ];
 
-function decode$16(x) {
+function fromString$13(t) {
+  return t;
+}
+
+function toString$13(t) {
+  return t;
+}
+
+function decode$16(param) {
+  return Json_decode.map(fromString$13, Json_decode.string, param);
+}
+
+function encode$16(d) {
+  return d;
+}
+
+function isEmpty$15(t) {
+  return t.trim().length === 0;
+}
+
+var areEqual$15 = Caml_obj.caml_equal;
+
+var BlockId = /* module */[
+  /* decode */decode$16,
+  /* encode */encode$16,
+  /* areEqual */areEqual$15,
+  /* fromString */fromString$13,
+  /* toString */toString$13,
+  /* isEmpty */isEmpty$15
+];
+
+function fromInt(t) {
+  return t;
+}
+
+function toInt(t) {
+  return t;
+}
+
+function decode$17(param) {
+  return Json_decode.map(fromInt, Json_decode.$$int, param);
+}
+
+function encode$17(d) {
+  return d;
+}
+
+var areEqual$16 = Caml_obj.caml_equal;
+
+var BlockNum = /* module */[
+  /* decode */decode$17,
+  /* encode */encode$17,
+  /* areEqual */areEqual$16,
+  /* fromInt */fromInt,
+  /* toInt */toInt
+];
+
+function fromString$14(t) {
+  return t;
+}
+
+function toString$14(t) {
+  return t;
+}
+
+function decode$18(param) {
+  return Json_decode.map(fromString$14, Json_decode.string, param);
+}
+
+function encode$18(d) {
+  return d;
+}
+
+function isEmpty$16(t) {
+  return t.trim().length === 0;
+}
+
+var areEqual$17 = Caml_obj.caml_equal;
+
+var TransactionId = /* module */[
+  /* decode */decode$18,
+  /* encode */encode$18,
+  /* areEqual */areEqual$17,
+  /* fromString */fromString$14,
+  /* toString */toString$14,
+  /* isEmpty */isEmpty$16
+];
+
+function decode$19(x) {
   return /* record */[
           /* actor */Json_decode.field("actor", decode, x),
           /* permission */Json_decode.field("permission", decode$1, x)
         ];
 }
 
-function encode$16(x) {
+function encode$19(x) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "actor",
@@ -1080,8 +1168,8 @@ function encode$16(x) {
 }
 
 var AccountPermission = /* module */[
-  /* decode */decode$16,
-  /* encode */encode$16
+  /* decode */decode$19,
+  /* encode */encode$19
 ];
 
 exports.MakeOpaqueStringType = MakeOpaqueStringType;
@@ -1106,7 +1194,10 @@ exports.Asset = Asset;
 exports.asset = asset;
 exports.MerkleRoot = MerkleRoot;
 exports.Signature = Signature;
+exports.ChainId = ChainId;
+exports.ServerVersion = ServerVersion;
 exports.BlockId = BlockId;
+exports.BlockNum = BlockNum;
 exports.TransactionId = TransactionId;
 exports.AccountPermission = AccountPermission;
 /* eosjs Not a pure module */

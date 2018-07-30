@@ -13,10 +13,10 @@ var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 
 function decode(d) {
   return /* record */[
-          /* serverVersion */Json_decode.field("server_version", Json_decode.string, d),
-          /* chainId */Json_decode.field("chain_id", Json_decode.string, d),
-          /* headBlockNum */Json_decode.field("head_block_num", Json_decode.$$int, d),
-          /* lastIrreversibleBlockNum */Json_decode.field("last_irreversible_block_num", Json_decode.$$int, d),
+          /* serverVersion */Json_decode.field("server_version", Eos_Types.ServerVersion[/* decode */0], d),
+          /* chainId */Json_decode.field("chain_id", Eos_Types.ChainId[/* decode */0], d),
+          /* headBlockNum */Json_decode.field("head_block_num", Eos_Types.BlockNum[/* decode */0], d),
+          /* lastIrreversibleBlockNum */Json_decode.field("last_irreversible_block_num", Eos_Types.BlockNum[/* decode */0], d),
           /* lastIrreversibleBlockId */Json_decode.field("last_irreversible_block_id", Eos_Types.BlockId[/* decode */0], d),
           /* headBlockId */Json_decode.field("head_block_id", Eos_Types.BlockId[/* decode */0], d),
           /* headBlockTime */Json_decode.field("head_block_time", Eos_Types.BlockTimestamp[/* decode */0], d),
@@ -32,22 +32,22 @@ function encode(x) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "server_version",
-                x[/* serverVersion */0]
+                Eos_Types.ServerVersion[/* encode */1](x[/* serverVersion */0])
               ],
               /* :: */[
                 /* tuple */[
                   "chain_id",
-                  x[/* chainId */1]
+                  Eos_Types.ChainId[/* encode */1](x[/* chainId */1])
                 ],
                 /* :: */[
                   /* tuple */[
                     "head_block_num",
-                    x[/* headBlockNum */2]
+                    Eos_Types.BlockNum[/* encode */1](x[/* headBlockNum */2])
                   ],
                   /* :: */[
                     /* tuple */[
                       "last_irreversible_block_num",
-                      x[/* lastIrreversibleBlockNum */3]
+                      Eos_Types.BlockNum[/* encode */1](x[/* lastIrreversibleBlockNum */3])
                     ],
                     /* :: */[
                       /* tuple */[
@@ -168,7 +168,7 @@ function nullableOption(decoder) {
 function t(x) {
   return /* record */[
           /* accountName */Json_decode.field("account_name", Eos_Types.AccountName[/* decode */0], x),
-          /* headBlockNum */Json_decode.field("head_block_num", Json_decode.$$int, x),
+          /* headBlockNum */Json_decode.field("head_block_num", Eos_Types.BlockNum[/* decode */0], x),
           /* headBlockTime */Json_decode.field("head_block_time", Eos_Types.BlockTimestamp[/* decode */0], x),
           /* privileged */Json_decode.field("privileged", Json_decode.bool, x),
           /* lastCodeUpdate */Json_decode.field("last_code_update", Eos_Types.BlockTimestamp[/* decode */0], x),
